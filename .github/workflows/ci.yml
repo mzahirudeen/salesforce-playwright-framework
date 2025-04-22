@@ -1,50 +1,42 @@
 name: Salesforce Test Automation
 
-     on:
-       push:
-         branches: [main]
-       pull_request:
-         branches: [main]
-       schedule:
-         - cron: '0 0 * * *' # Daily at midnight
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 0 * * *" # Daily at midnight
 
-     jobs:
-       test:
-         runs-on: ubuntu-latest
-         strategy:
-           matrix:
-             browser: [chromium, firefox, webkit]
-             env: [qa, uat]
-         steps:
-           - uses: actions/checkout@v4
-           - uses: actions/setup-node@v4
-             with:
-               node-version: '20'
-           - run: npm ci
-           - run: npm run lint
-           - run: npm audit
-           - run: npm run test -- --project=${{ matrix.browser }} --env=${{ matrix.env }}
-             env:
-               SF_USERNAME: ${{ secrets.SF_USERNAME }}
-               SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
-               SF_CLIENT_ID: ${{ secrets.SF_CLIENT_ID }}
-               SF_CLIENT_SECRET: ${{ secrets.SF_CLIENT_SECRET }}
-               JIRA_URL: ${{ secrets.JIRA_URL }}
-               JIRA_USERNAME: ${{ secrets.JIRA_USERNAME }}
-               JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-               SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-           - uses: actions/upload-artifact@v4
-             if: always()
-             with:
-               name: test-results-${{ matrix.browser }}-${{ matrix.env }}
-               path: |
-                 reports/
-                 playwright-report/
-                 allure-results/
-           - name: Notify Slack
-             if: failure()
-             uses: slackapi/slack-github-action@v1.26.0
-             with:
-               slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
-               channel-id: 'test-automation'
-               text: 'Test run failed for ${{ matrix.browser }} in ${{ matrix.env }}'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
+        env: [qa, uat]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci
+      - run: npm run lint
+      - run: npm audit
+      - run: npm run test -- --project=${{ matrix.browser }} --env=${{ matrix.env }}
+        env:
+          SF_USERNAME: ${{ secrets.SF_USERNAME }}
+          SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
+          SF_CLIENT_ID: ${{ secrets.SF_CLIENT_ID }}
+          SF_CLIENT_SECRET: ${{ secrets.SF_CLIENT_SECRET }}
+          JIRA_URL: ${{ secrets.JIRA_URL }}
+          JIRA_USERNAME: ${{ secrets.JIRA_USERNAME }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.browser }}-${{ matrix.env }}
+          path: |
+            reports/
+            playwright-report/
+            allure-results/
