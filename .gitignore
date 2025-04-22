@@ -1,0 +1,5 @@
+node_modules/
+reports/
+playwright-report/
+allure-results/
+.env*gi

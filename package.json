@@ -1,0 +1,39 @@
+{
+  "name": "salesforce-playwright-framework",
+  "version": "1.0.0",
+  "description": "Production-grade Test Automation Framework for Salesforce",
+  "scripts": {
+    "test": "node scripts/run-tests.js",
+    "test:ui": "node scripts/run-tests.js --type=ui",
+    "test:api": "node scripts/run-tests.js --type=api",
+    "test:smoke": "node scripts/run-tests.js --tags=@smoke",
+    "test:regression": "node scripts/run-tests.js --tags=@regression",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "postinstall": "husky install",
+    "report": "playwright show-report"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.44.0",
+    "allure-playwright": "^2.15.0",
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "js-yaml": "^4.1.0",
+    "papaparse": "^5.4.1",
+    "slack-notify": "^2.0.7",
+    "winston": "^3.13.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.25.1",
+    "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.7",
+    "prettier": "^3.3.2"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
+}
